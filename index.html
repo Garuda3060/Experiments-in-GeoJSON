@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>GeoJSON Experiments</title>
+
+  <!-- Javascript for MapBox -->
+  <script src='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.js'></script>
+  <!-- CSS for MapBox -->
+  <link href='https://api.tiles.mapbox.com/mapbox.js/v1.6.2/mapbox.css' rel='stylesheet' />
+  <!-- CDN for JQuery -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+
+  <style>
+  body { margin:0; padding:0; }
+  #map { position:absolute; top:0; bottom:0; width:100%; }
+  </style>
+
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+  // Instantiate MapBox map
+  var map = L.mapbox.map('map', '[YOUR KEY HERE]');
+  map.setView([10.1, 125.6], 5);
+  </script>
+</body>
+<script>
+// Gather point from CouchDB/Cloudant
+$(function() {
+  $.getJSON("https://cartography.cloudant.com/maps/_design/coordinates/_view/getPoints?callback=?", function(result) {
+    var points = result.rows;
+    var geoJSON = [];
+    for(var i in points)
+    {
+      geoJSON["locations"] = geoJSON.push(points[i].value);
+    }
+    map.featureLayer.setGeoJSON(geoJSON);
+  }
+);
+});
+
+</script>
+</html>
